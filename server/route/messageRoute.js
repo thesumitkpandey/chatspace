@@ -2,8 +2,8 @@ import express from "express";
 import {
   getUsersController,
   getMessagesController,
-} from "../controller/messageController";
-import protect from "../middleware/authMiddleware";
+} from "../controller/messageController.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 //START FROM HERE AT 1:16

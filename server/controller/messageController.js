@@ -1,5 +1,5 @@
-import User from "../model/userModel";
-import Message from "../model/messageModel";
+import User from "../model/userModel.js";
+import Message from "../model/messageModel.js";
 const getUsersController = async (req, res) => {
   try {
     const allUsers = await User.find({ _id: { $ne: req.loggedInUser._id } });
@@ -9,7 +9,7 @@ const getUsersController = async (req, res) => {
     res.status(500).json({ message: "INTERNAL SERVER ERROR" });
   }
 };
-const getMessages = async (req, res) => {
+const getMessagesController = async (req, res) => {
   try {
     const friendId = req.params.id;
     const myId = req.loggedInUser._id;
