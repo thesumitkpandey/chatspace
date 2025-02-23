@@ -33,7 +33,7 @@ function App() {
         />
         <Route
           path="/profile"
-          element={authenticatedUser ? <Profile /> : <Navigate to="/login" />}
+          element={authenticatedUser ? <Profile /> : <Navigate to="/login" />} //
         />
         <Route path="/settings" element={<Settings />} />
         <Route
