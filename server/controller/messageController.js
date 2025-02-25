@@ -1,8 +1,11 @@
 import User from "../model/userModel.js";
 import Message from "../model/messageModel.js";
+import cloudinary from "../lib/cloudinary.js";
 const getUsersController = async (req, res) => {
   try {
-    const allUsers = await User.find({ _id: { $ne: req.loggedInUser._id } });
+    const allUsers = await User.find({
+      _id: { $ne: req.loggedInUser._id },
+    }).select("-password");
     res.status(200).json({ users: allUsers });
   } catch (error) {
     console.error("Error in getUsersController", error);

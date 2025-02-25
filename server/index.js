@@ -5,9 +5,10 @@ import authRoute from "./route/authRoute.js";
 import cookieParser from "cookie-parser";
 import messageRoute from "./route/messageRoute.js";
 import cors from "cors";
+
 dotenv.config();
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
