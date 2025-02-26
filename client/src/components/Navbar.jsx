@@ -2,10 +2,12 @@ import { FaUserCircle } from "react-icons/fa";
 import { useAuthStore } from "../store/useAuthStore";
 import React, { useState, useRef, useEffect } from "react";
 import Logo from "../assets/logo.webp";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import useChatStore from "../store/useChatStore";
 
 const Navbar = () => {
   const { authenticatedUser, logout } = useAuthStore();
+
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -26,7 +28,7 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center space-x-4">
-          <img src={Logo} alt="Logo" className="h-12 w-auto" />
+          <img src={Logo} alt="Logo" className="h-14 w-auto" />
         </div>
 
         {/* User Profile Section OR LinkedIn Link */}
@@ -44,7 +46,7 @@ const Navbar = () => {
                     className="w-10 h-10 rounded-full border-2 border-yellow-400 shadow-md cursor-pointer"
                   />
                 ) : (
-                  <FaUserCircle className="text-3xl cursor-pointer hover:text-yellow-300" />
+                  <FaUserCircle className="text-4xl cursor-pointer hover:text-yellow-300" />
                 )}
               </button>
 

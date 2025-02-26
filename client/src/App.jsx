@@ -9,6 +9,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import { useAuthStore } from "./store/useAuthStore.js";
 import { Toaster } from "react-hot-toast";
+
 function App() {
   const { authenticatedUser, isCheckingAuth, checkAuth } = useAuthStore();
   useEffect(() => {

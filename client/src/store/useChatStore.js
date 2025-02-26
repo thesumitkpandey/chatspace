@@ -5,7 +5,7 @@ import { create } from "zustand";
 const useChatStore = create((set) => ({
   messages: [],
   users: [],
-  selectedUser: null,
+  selectedChat: null,
   isUsersLoading: false,
   isMessagesLoading: false,
 
@@ -25,7 +25,7 @@ const useChatStore = create((set) => ({
   getMessages: async (id) => {
     set({ isMessagesLoading: true });
     try {
-      const res = await axiosInstance.get(`/messages/${id}`);
+      const res = await axiosInstance.get(`/message/${id}`);
       set({ messages: res.data });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
