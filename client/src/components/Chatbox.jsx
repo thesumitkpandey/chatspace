@@ -1,25 +1,73 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useChatStore from "../store/useChatStore";
 import { useParams } from "react-router-dom";
 import avatar from "../assets/avatar.webp";
+import MessageSkeletonLoader from "./skeleton/MessageSkeleton";
+import { toast } from "react-hot-toast";
 
 const Chatbox = () => {
-  const { messages, getMessages, selectedChat, setSelectedChat } =
-    useChatStore();
+  const {
+    messages,
+    getMessages,
+    selectedChat,
+    isMessagesLoading,
+    sendMessages,
+  } = useChatStore();
+  console.log(messages);
+  const [textInput, setTextInput] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
   const { id } = useParams();
-  const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
-    if (id) {
-      getMessages(id);
-      setSelectedChat({ _id: id }); // Ensure chat is set
+    if (selectedChat) {
+      getMessages(selectedChat._id);
     }
-  }, [id]);
+  }, [selectedChat]);
+
+  if (isMessagesLoading) {
+    return <MessageSkeletonLoader />;
+  }
+
+  // Handle Image Upload
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle Message Send
+  const handleMessageSubmit = async (e) => {
+    e.preventDefault();
+    if (!textInput.trim() && !imagePreview) return;
+
+    let imageFile = null;
+    if (fileInputRef.current.files[0]) {
+      imageFile = fileInputRef.current.files[0];
+    }
+
+    await sendMessages(textInput, imageFile);
+
+    setTextInput("");
+    setImagePreview(null);
+    fileInputRef.current.value = ""; // Reset file input
+  };
 
   return (
     <div className="h-full flex flex-col bg-black text-white">
       {/* Chat Header */}
-      <div className="p-4 bg-gray-900 text-lg font-semibold flex items-center space-x-3 border-b border-gray-700">
+      <div className="p-4 bg-gray-800 text-lg font-semibold flex items-center space-x-3 border-b border-gray-700">
         <img
           src={selectedChat?.profilePicture || avatar}
           alt="Receiver"
@@ -34,33 +82,76 @@ const Chatbox = () => {
           <div
             key={index}
             className={`mb-2 ${
-              msg.sender === "You" ? "text-right" : "text-left"
+              msg.senderId != selectedChat._id ? "text-right" : "text-left"
             }`}
           >
             <p
               className={`inline-block p-2 rounded-lg ${
-                msg.sender === "You" ? "bg-gray-800" : "bg-gray-900"
+                msg.senderId != selectedChat._id
+                  ? "bg-yellow-400"
+                  : "bg-gray-800"
               }`}
             >
-              {msg.text}
+              {msg.message}
             </p>
           </div>
         ))}
       </div>
 
+      {/* Image Preview Section */}
+      {imagePreview && (
+        <div className="p-4 border-t border-gray-700 bg-gray-800 flex items-center justify-between">
+          <img
+            src={imagePreview}
+            alt="Preview"
+            className="w-24 h-24 rounded-lg"
+          />
+          <button
+            className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-500"
+            onClick={() => setImagePreview(null)}
+          >
+            Remove
+          </button>
+        </div>
+      )}
+
       {/* Message Input */}
-      <div className="p-4 flex border-t border-gray-700 bg-gray-900">
+      <form
+        onSubmit={handleMessageSubmit}
+        className="p-4 flex items-center border-t border-gray-700 bg-gray-900"
+      >
         <input
           type="text"
           className="flex-1 p-2 border border-gray-600 rounded-lg bg-black text-white"
           placeholder="Type a message..."
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          value={textInput}
+          onChange={(e) => setTextInput(e.target.value)}
         />
-        <button className="ml-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700">
+
+        {/* Image Upload Button */}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleImageChange}
+        />
+        <button
+          type="button"
+          className="ml-2 px-4 py-2 bg-gray-800 rounded-lg hover:bg-gray-700"
+          onClick={() => fileInputRef.current.click()}
+        >
+          📷
+        </button>
+
+        {/* Send Button */}
+        <button
+          type="submit"
+          className="ml-2 px-4 py-2 bg-yellow-400 rounded-lg hover:bg-yellow-500"
+        >
           Send
         </button>
-      </div>
+      </form>
     </div>
   );
 };

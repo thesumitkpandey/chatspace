@@ -13,12 +13,13 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: "http://localhost:5173",
+
     credentials: true,
   })
 );
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoute);
-app.use("/api/message", messageRoute);
+app.use("/api", messageRoute);
 
 //SERVER AND DATABASECONNECTION
 async function server() {

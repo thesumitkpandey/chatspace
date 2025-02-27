@@ -33,8 +33,8 @@ const getMessagesController = async (req, res) => {
 const sendMessage = async (req, res) => {
   const receiverId = req.params.id;
   const senderId = req.loggedInUser._id;
-  const { text, image } = req.body;
-
+  const { message, image } = req.body;
+  console.log(image);
   try {
     let imageUrl;
     if (image) {
@@ -43,8 +43,9 @@ const sendMessage = async (req, res) => {
     }
     const newMessage = await Message.create({
       senderId,
+
       receiverId,
-      text,
+      message,
       image: imageUrl,
     });
     //add socket functionality herel
@@ -54,4 +55,4 @@ const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-export { getUsersController, getMessagesController };
+export { getUsersController, getMessagesController, sendMessage };
