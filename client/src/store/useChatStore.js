@@ -38,15 +38,24 @@ const useChatStore = create((set, get) => ({
   setSelectedChat: (user) => {
     set({ selectedChat: user });
   },
-  sendMessages: async (message) => {
+  sendMessages: async (message, image) => {
     const { selectedChat, messages } = get();
-    console.log(selectedChat._id);
+
     try {
-      const res = await axiosInstance.post(`/message/${selectedChat._id}`, {
+      const messageOrImage = {
         message,
-      });
+        image, // This will contain the Base64 string (if available)
+      };
+
+      const res = await axiosInstance.post(
+        `/message/${selectedChat._id}`,
+        messageOrImage
+      );
+
       set({ messages: [...messages, res.data] });
-    } catch (error) {}
+    } catch (error) {
+      toast.error("Failed to send message");
+    }
   },
 }));
 export default useChatStore;

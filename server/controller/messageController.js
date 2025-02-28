@@ -34,25 +34,31 @@ const sendMessage = async (req, res) => {
   const receiverId = req.params.id;
   const senderId = req.loggedInUser._id;
   const { message, image } = req.body;
-  console.log(image);
+
   try {
-    let imageUrl;
+    let imageUrl = null;
+
+    // If an image is provided in Base64, upload it to Cloudinary
     if (image) {
-      let uploadResponse = await cloudinary.uploader.upload(image);
-      imageUrl = uploadResponse.url;
+      const uploadResponse = await cloudinary.uploader.upload(image, {
+        folder: "chat_images", // Optional: Save images in a specific folder
+      });
+      imageUrl = uploadResponse.secure_url;
     }
+
+    // Create new message
     const newMessage = await Message.create({
       senderId,
-
       receiverId,
       message,
-      image: imageUrl,
+      image: imageUrl || undefined, // Assign imageUrl only if it exists
     });
-    //add socket functionality herel
+
     res.status(200).json(newMessage);
   } catch (error) {
-    console.log("Oops! Something went wrong: ", error.message);
+    console.error("Error sending message:", error);
     res.status(500).json({ error: "Server error" });
   }
 };
+
 export { getUsersController, getMessagesController, sendMessage };

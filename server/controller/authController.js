@@ -74,8 +74,8 @@ const loginController = async (req, res) => {
 };
 
 const updateProfileController = async (req, res) => {
-  console.log(req.body);
   const { profilePicture } = req.body;
+  console.log(profilePicture);
   try {
     const cloudinaryResponse = await cloudinary.uploader.upload(profilePicture);
     const updatedUser = await User.findByIdAndUpdate(
@@ -85,12 +85,8 @@ const updateProfileController = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json({
-      name: updatedUser.name,
-      email: updatedUser.email,
-      profilePicture: updatedUser.profilePicture,
-    });
-    res.status(200).json({ updatedUser });
+
+    res.status(200).json({ ...updatedUser });
   } catch (error) {
     console.log("Error in updateProfileController", error);
     res.status(500).json({ message: "Internal server error" });

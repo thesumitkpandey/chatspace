@@ -13,7 +13,6 @@ const Chatbox = () => {
     isMessagesLoading,
     sendMessages,
   } = useChatStore();
-  console.log(messages);
   const [textInput, setTextInput] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
@@ -29,17 +28,13 @@ const Chatbox = () => {
     return <MessageSkeletonLoader />;
   }
 
-  // Handle Image Upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-
     if (!file) return;
-
     if (!file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
@@ -47,25 +42,17 @@ const Chatbox = () => {
     reader.readAsDataURL(file);
   };
 
-  // Handle Message Send
   const handleMessageSubmit = async (e) => {
     e.preventDefault();
     if (!textInput.trim() && !imagePreview) return;
-
-    let imageFile = null;
-    if (fileInputRef.current.files[0]) {
-      imageFile = fileInputRef.current.files[0];
-    }
-
-    await sendMessages(textInput, imageFile);
-
+    await sendMessages(textInput, imagePreview);
     setTextInput("");
     setImagePreview(null);
-    fileInputRef.current.value = ""; // Reset file input
+    fileInputRef.current.value = "";
   };
 
   return (
-    <div className="h-full flex flex-col bg-black text-white">
+    <div className="h-screen w-full flex flex-col bg-black text-white">
       {/* Chat Header */}
       <div className="p-4 bg-gray-800 text-lg font-semibold flex items-center space-x-3 border-b border-gray-700">
         <img
@@ -82,17 +69,25 @@ const Chatbox = () => {
           <div
             key={index}
             className={`mb-2 ${
-              msg.senderId != selectedChat._id ? "text-right" : "text-left"
+              msg.senderId !== selectedChat._id ? "text-right" : "text-left"
             }`}
           >
             <p
               className={`inline-block p-2 rounded-lg ${
-                msg.senderId != selectedChat._id
+                msg.senderId !== selectedChat._id
                   ? "bg-yellow-400"
                   : "bg-gray-800"
               }`}
             >
-              {msg.message}
+              {msg.image ? (
+                <img
+                  src={msg.image}
+                  alt="Sent Image"
+                  className="max-w-xs rounded-lg"
+                />
+              ) : (
+                msg.message
+              )}
             </p>
           </div>
         ))}
