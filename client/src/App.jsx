@@ -16,7 +16,6 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, []);
-  console.log(onlineUsers);
   if (isCheckingAuth && !authenticatedUser) {
     return <div className="w-full h-full bg-amber-400">loading...</div>;
   }

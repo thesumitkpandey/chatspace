@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
 import { toast } from "react-hot-toast";
 import { io } from "socket.io-client";
-import { BASE_URL } from "../lib/constants.js";
+
 export const useAuthStore = create((set, get) => ({
   authenticatedUser: null,
   isSignupUnderProcess: false,
@@ -84,7 +84,7 @@ export const useAuthStore = create((set, get) => ({
     const { authenticatedUser } = get();
     if (!authenticatedUser) return;
 
-    const socket = io(BASE_URL, {
+    const socket = io(import.meta.env.VITE_BASE_URL, {
       query: {
         userId: authenticatedUser._id,
       },
@@ -99,7 +99,7 @@ export const useAuthStore = create((set, get) => ({
     const { socket } = get();
     if (socket) {
       socket.disconnect();
-      set({ socket: null }); // Reset socket state
+      set({ socket: null });
     }
   },
 }));
