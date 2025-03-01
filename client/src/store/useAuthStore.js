@@ -84,7 +84,7 @@ export const useAuthStore = create((set, get) => ({
     const { authenticatedUser } = get();
     if (!authenticatedUser) return;
 
-    const socket = io("https://chatspace-backend-e8lw.onrender.com/", {
+    const socket = io(import.meta.env.VITE_BASE_URL, {
       query: {
         userId: authenticatedUser._id,
       },
