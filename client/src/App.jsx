@@ -11,11 +11,12 @@ import { useAuthStore } from "./store/useAuthStore.js";
 import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { authenticatedUser, isCheckingAuth, checkAuth } = useAuthStore();
+  const { authenticatedUser, isCheckingAuth, checkAuth, onlineUsers } =
+    useAuthStore();
   useEffect(() => {
     checkAuth();
   }, []);
-
+  console.log(onlineUsers);
   if (isCheckingAuth && !authenticatedUser) {
     return <div className="w-full h-full bg-amber-400">loading...</div>;
   }

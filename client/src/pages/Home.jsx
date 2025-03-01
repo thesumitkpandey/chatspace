@@ -6,12 +6,12 @@ const Home = () => {
   return (
     <div className="h-screen w-screen flex bg-black">
       {/* Sidebar */}
-      <div className="w-1/4 border-r border-gray-700">
+      <div className="w-2/7 border-r border-gray-700">
         <Sidebar />
       </div>
 
       {/* Chatbox */}
-      <div className="w-3/4">
+      <div className="w-5/7">
         <Chatbox />
       </div>
     </div>

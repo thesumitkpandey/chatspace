@@ -12,21 +12,33 @@ const Chatbox = () => {
     selectedChat,
     isMessagesLoading,
     sendMessages,
+    subscribeToMessage,
+    unsubscribeToMessage,
   } = useChatStore();
   const [textInput, setTextInput] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const messagesEndRef = useRef(null); // Ref for messages end to scroll to bottom
   const { id } = useParams();
 
   useEffect(() => {
     if (selectedChat) {
       getMessages(selectedChat._id);
+      subscribeToMessage();
+      return () => {
+        unsubscribeToMessage();
+      };
     }
-  }, [selectedChat]);
+  }, [selectedChat, subscribeToMessage, unsubscribeToMessage]);
 
-  if (isMessagesLoading) {
-    return <MessageSkeletonLoader />;
-  }
+  // Scroll to bottom on messages update
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -50,6 +62,10 @@ const Chatbox = () => {
     setImagePreview(null);
     fileInputRef.current.value = "";
   };
+
+  if (isMessagesLoading) {
+    return <MessageSkeletonLoader />;
+  }
 
   return (
     <div className="h-screen w-full flex flex-col bg-black text-white">
@@ -91,6 +107,7 @@ const Chatbox = () => {
             </p>
           </div>
         ))}
+        <div ref={messagesEndRef} /> {/* Ref to scroll to bottom */}
       </div>
 
       {/* Image Preview Section */}

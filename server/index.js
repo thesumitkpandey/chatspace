@@ -5,9 +5,9 @@ import authRoute from "./route/authRoute.js";
 import cookieParser from "cookie-parser";
 import messageRoute from "./route/messageRoute.js";
 import cors from "cors";
-
+import { app, server, io } from "./lib/Socket.js";
 dotenv.config();
-const app = express();
+
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(cookieParser());
 app.use(
@@ -22,15 +22,15 @@ app.use("/api/auth", authRoute);
 app.use("/api", messageRoute);
 
 //SERVER AND DATABASECONNECTION
-async function server() {
+async function connectToServer() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log("DATABASEE CONNECTION SUCCESSFUL");
-    app.listen(process.env.PORT || 3000, () => {
+    server.listen(process.env.PORT || 3000, () => {
       console.log(`SERVER IS LISTENING AT PORT ${process.env.PORT || 3000}`);
     });
   } catch (error) {
     console.log("INTERNAL SERVER ERROR PLEASE TRY AGAIN", error);
   }
 }
-server();
+connectToServer();
